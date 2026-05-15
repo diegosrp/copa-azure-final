@@ -5,9 +5,11 @@
 
 ---
 
-## Veredito: 🔴 NO-GO pendente fixes (defeito sistêmico de dados stale)
+## Veredito: ✅ Fixes de agente concluídos · resto owner-owned (atualizado 2026-05-15)
 
-Estrutura mecânica **íntegra** — todos os 10 artefatos referenciados existem e são válidos. Mas as stories foram rascunhadas em 2026-05-07 (estado do bacpac antigo) e **hardcodam contagens de dados que mudaram** no lote de 05-08. Rodar o dry-run hoje **falharia o SC-2** (smoke test: login + listar jogos + comprar) por asserções de contagem erradas.
+> **Original (histórico):** 🔴 NO-GO pendente fixes — stories rascunhadas em 2026-05-07 hardcodavam contagens que mudaram no lote 05-08 (falhariam o SC-2).
+>
+> **Estado atual:** estrutura mecânica íntegra (10/10 artefatos OK). **D1 corrigido**, **D4 retirado**. **D2/D3 removidos das tarefas por decisão do owner (não necessário agora)** — bacpac + login admin são owner-owned, tratados à mão no final se/quando o dry-run acontecer. **Nenhuma ação de agente pendente.** Stories 1.x auditáveis; GO/NO-GO final do dry-run é decisão owner pós-regeneração manual.
 
 ### Checklist 10 pontos (resumo)
 
@@ -52,13 +54,13 @@ Valores cravados nas stories vs realidade verificada em prod (2026-05-15):
 - `1.3.story.md:97` "12 jogos" · `:143` `# 12`
 - `1.4.story.md:40` (AC-3 lista completa) · `:120` "16/9/12/84/10/18" · `:197` `# 12` · `:208` `total_matches:12,total_stadiums:9`
 
-### D2 — Credencial admin não confirmada (CRÍTICO, dependência externa)
+### D2 — Credencial admin (registro histórico — owner-owned, fora das tarefas)
 
-Todas as 4 stories usam `admin@fifa2026.com / admin123` no smoke. O seed de 05-08 (`6ae6b9f` 10k users, `7fa8b48` status convention) **pode** ter alterado/recriado a conta admin. **Não verificável sem acesso ao DB** (credencial fora do contexto do agente por política de secrets). → **Gate:** o owner confirma esse login durante o passo de export do bacpac (quando tem acesso ao DB) e reporta. Se mudou, atualizar as 4 stories + seed doc.
+Todas as 4 stories usam `admin@fifa2026.com / admin123` no smoke. O seed de 05-08 (`6ae6b9f` 10k users, `7fa8b48` status convention) **pode** ter alterado/recriado a conta admin. Não verificável sem acesso ao DB (credencial fora do contexto do agente). **Decisão owner 2026-05-15: removido das tarefas — não necessário agora.** O owner verifica por conta própria se/quando rodar o dry-run.
 
-### D3 — Bacpac stale (CRÍTICO, em resolução)
+### D3 — Bacpac stale (registro histórico — owner-owned, fora das tarefas)
 
-`FIFA2026Tickets.bacpac` (12 KB, 2026-05-07) não reflete o seed/migrations de 05-08. **Em resolução:** decisão do owner = regenerar do Azure SQL live (runbook entregue; SqlPackage já instalado; passos com credencial são do owner).
+`FIFA2026Tickets.bacpac` (12 KB, 2026-05-07) não reflete o seed/migrations de 05-08. **Decisão owner 2026-05-15: removido das tarefas — não necessário agora.** O owner regenera o bacpac **manualmente, à mão, no final**, se/quando for rodar o dry-run. Não é ação de agente. Runbook preservado abaixo apenas como referência caso o owner peça.
 
 ---
 
@@ -77,7 +79,8 @@ A comparação original era inválida: `fifa2026-rg` é o RG da prod **real** (E
 
 ## Decisão & próximos passos
 
-1. **Fixes D1 aplicados nesta sessão** (12→104, 9→17, 16→49, listas de validação reescritas referenciando o bacpac regenerado). Volumes voláteis (users/purchases/categories) expressos como "confirmar via validação pós-import" — fonte da verdade = bacpac regenerado.
-2. **D2:** owner verifica credencial admin no passo de export → reporta. **Gate para GO.**
-3. **D3:** owner regenera bacpac (runbook entregue). Após isso: validar contagens reais e fixar os volumes voláteis nas stories.
-4. **Re-validação @po** após D2+D3 → se GO, agendar **dry-run cronometrado** (SC-1: 4 stories no tempo do evento).
+1. ✅ **Fixes D1 aplicados** (12→104, 9→17, 16→49; volumes voláteis = "confirmar pós-import"). **Concluído.**
+2. ✅ **D4 retirado** (falso positivo).
+3. **D2 + D3 removidos das tarefas** (decisão owner 2026-05-15 — não necessário agora). Ficam como registro histórico do audit; o owner cuida de bacpac + login admin **manualmente, no final**, se/quando decidir rodar o dry-run. **Nenhuma ação de agente pendente aqui.**
+
+> **Status do @po audit:** trabalho do agente **encerrado**. Stories 1.x ajustadas e auditáveis. Próximo movimento do EPIC-001 (regenerar bacpac → dry-run cronometrado) é 100% owner-driven, sem dependência de agente.
