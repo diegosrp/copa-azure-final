@@ -114,17 +114,17 @@ Tudo num **novo Resource Group** PaaS, em **Central India** (mesma região da ap
                     │  80/443
                     ▼
         ┌───────────────────────┐   RDP (jump host)
-        │  vm-fend  (pública)   │◀─────────────────┐
+        │  vm-fend  (pública)   │◀───────────── ───┐
         │  IIS + ARR (proxy)    │                  │
         └───────────┬───────────┘                  │
-              /api/* │ (porta 80, VNet)             │
-                    ▼                               │
+              /api/* │ (porta 80, VNet)            │
+                    ▼                              │
         ┌───────────────────────┐                  │
         │  vm-bend  (privada)   │                  │
         │  IIS + iisnode + Node │                  │
         └───────────┬───────────┘                  │
-              1433   │  (peering global)            │
-                    ▼                               │
+              1433   │  (peering global)           │
+                    ▼                              │
         ┌───────────────────────┐                  │
         │  vm-data  (privada)   │──────────────────┘
         │  SQL Server 2022      │
